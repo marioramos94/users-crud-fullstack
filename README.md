@@ -1,8 +1,8 @@
-## Serverless User CRUD
+# Serverless User CRUD
 
 In the project directory, you can run:
 
-### Stack
+## Stack
 
 Backend: DynamoDB - C# on Lambda - API Gateway
 
