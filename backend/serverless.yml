@@ -1,0 +1,70 @@
+service: users-crud
+frameworkVersion: '2'
+provider:
+  name: aws
+  runtime: dotnetcore3.1
+  httpApi:
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: https://dev-11650317.okta.com/oauth2/default
+        audience: api://default
+  lambdaHashingVersion: 20201221 
+  iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DescribeTable"
+          - "dynamodb:Query"
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:UpdateItem"
+          - "dynamodb:DeleteItem"
+        Resource: "arn:aws:dynamodb:us-east-1:450972188274:table/Users"
+package:
+  individually: true
+functions:
+  create:
+    handler: CsharpHandlers::AwsDotnetCsharp.CreateHandler::Create
+    events:
+      - httpApi: 
+          path: /create
+          method: post
+          authorizer: serviceAuthorizer
+    package:
+        artifact: bin/Release/netcoreapp3.1/users_api.zip
+  delete:
+    handler: CsharpHandlers::AwsDotnetCsharp.DeleteHandler::Delete
+    events:
+      - httpApi: 
+          path: /delete/{id}
+          method: delete
+          authorizer: serviceAuthorizer
+    package:
+      artifact: bin/Release/netcoreapp3.1/users_api.zip
+  get:
+    handler: CsharpHandlers::AwsDotnetCsharp.GetHandler::Get
+    events:
+      - httpApi: 
+          path: /get/{id}
+          method: get
+          authorizer: serviceAuthorizer   
+    package:
+      artifact: bin/Release/netcoreapp3.1/users_api.zip
+  list:
+    handler: CsharpHandlers::AwsDotnetCsharp.ListHandler::List
+    events:
+      - httpApi: 
+          path: /list
+          method: get
+          authorizer: serviceAuthorizer
+    package:
+      artifact: bin/Release/netcoreapp3.1/users_api.zip
+  update:
+    handler: CsharpHandlers::AwsDotnetCsharp.UpdateHandler::Update
+    events:
+      - httpApi: 
+          path: /update/{id}
+          method: put
+          authorizer: serviceAuthorizer         
+    package:
+      artifact: bin/Release/netcoreapp3.1/users_api.zip
